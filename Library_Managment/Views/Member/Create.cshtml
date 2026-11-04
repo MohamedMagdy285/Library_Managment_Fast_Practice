@@ -1,0 +1,211 @@
+﻿@model Library_Managment.PL.ViewModels.MemberViewModel
+
+@{
+    ViewData["Title"] = "Register Member";
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        padding: 3rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 2rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .section-header i { color: var(--primary); font-size: 1.2rem; }
+    .section-header span { font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: var(--text-muted); }
+
+    .form-label { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; display: block; }
+
+    .input-group-text {
+        background-color: #f8fafc;
+        border-color: var(--border-color);
+        color: var(--text-muted);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        outline: none;
+    }
+
+    .has-icon .form-control {
+        border-left: none;
+        border-radius: 0 12px 12px 0;
+    }
+
+    .btn-save {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem 2.5rem;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    }
+
+    .member-icon-box {
+        width: 64px;
+        height: 64px;
+        background: #eef2ff;
+        color: var(--primary);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header Navigation -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a asp-action="Index" class="text-decoration-none text-muted small fw-bold">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Members List
+                </a>
+            </div>
+
+            <div class="form-card">
+                <div class="text-center mb-5">
+                    <div class="member-icon-box mx-auto">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h2 class="fw-bold m-0">New Member Registration</h2>
+                    <p class="text-muted">Fill in the details to create a new library membership.</p>
+                </div>
+
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-4"></div>
+
+                    <!-- Personal Details Section -->
+                    <div class="section-header">
+                        <i class="bi bi-person-vcard"></i>
+                        <span>Identity & Contact</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="FullName" class="form-label">Full Name</label>
+                        <div class="input-group has-icon">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input asp-for="FullName" class="form-control" placeholder="John Doe" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <div class="input-group has-icon">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control" placeholder="john@example.com" type="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="Phone" class="form-label">Phone Number</label>
+                            <div class="input-group has-icon">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Phone" class="form-control" placeholder="+1 (555) 000-0000" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Membership Section -->
+                    <div class="section-header mt-4">
+                        <i class="bi bi-geo-alt"></i>
+                        <span>Location & Membership</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="JoinDate" class="form-label">Registration Date</label>
+                            <div class="input-group has-icon">
+                                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                                <input asp-for="JoinDate" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                            </div>
+                            <span asp-validation-for="JoinDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Membership Type</label>
+                            <select class="form-select" style="border-radius: 12px; padding: 0.75rem 1rem;">
+                                <option selected>Standard Account</option>
+                                <option>Premium Member</option>
+                                <option>Student Account</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label asp-for="Address" class="form-label">Residential Address</label>
+                        <div class="input-group has-icon">
+                            <span class="input-group-text"><i class="bi bi-house"></i></span>
+                            <textarea asp-for="Address" class="form-control" rows="3" placeholder="123 Library St, Booktown..."></textarea>
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-4 border-top d-flex justify-content-end gap-3">
+                        <a asp-action="Index" class="btn btn-light border rounded-pill px-4 fw-bold">Cancel</a>
+                        <button type="submit" class="btn btn-save rounded-pill px-5">
+                            <i class="bi bi-check-circle me-2"></i> Register Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

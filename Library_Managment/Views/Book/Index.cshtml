@@ -1,0 +1,241 @@
+﻿@model IEnumerable<Library_Managment.PL.ViewModels.BookViewModel>
+
+@{
+    ViewData["Title"] = "Book Catalog";
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+    }
+
+    .main-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    /* Thumbnail Style */
+    .book-thumb {
+        width: 45px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        background-color: #f1f5f9;
+    }
+
+    /* Stock Status Badges */
+    .status-pill {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.35rem 0.8rem;
+        border-radius: 10px;
+    }
+
+    .in-stock {
+        background: #ecfdf5;
+        color: #059669;
+    }
+
+    .low-stock {
+        background: #fffbeb;
+        color: #d97706;
+    }
+
+    .out-of-stock {
+        background: #fef2f2;
+        color: #dc2626;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        border: none;
+        padding: 1.2rem 1rem;
+    }
+
+    .table td {
+        vertical-align: middle;
+        padding: 1.2rem 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .book-title {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+        margin-bottom: 0.1rem;
+    }
+
+    .btn-action {
+        width: 32px;
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: var(--text-muted);
+        transition: all 0.2s;
+    }
+
+        .btn-action:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+    .btn-add-book {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+        border-radius: 12px;
+        padding: 0.7rem 1.5rem;
+        border: none;
+        transition: all 0.3s;
+    }
+
+        .btn-add-book:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="container py-5">
+    <!-- Header Area -->
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold m-0 text-dark">Library Catalog</h2>
+            <p class="text-muted m-0">Manage digital assets and physical inventory.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-add-book">
+            <i class="bi bi-journal-plus me-2"></i>Catalog New Book
+        </a>
+    </div>
+
+    <!-- Stats summary for books -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="main-card p-3 d-flex align-items-center">
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3">
+                    <i class="bi bi-book fs-4"></i>
+                </div>
+                <div>
+                    <div class="small text-muted">Total Titles</div>
+                    <div class="fw-bold">@Model.Count()</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search & Filter Bar -->
+    <div class="main-card mb-4 p-3 bg-white">
+        <form asp-action="Index" method="get" class="row g-2">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0" placeholder="Search by Title, ISBN or Author..." value="@Context.Request.Query["search"]">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-dark rounded-3 px-4">Filter</button>
+                <a asp-action="Index" class="btn btn-light border rounded-3 px-3">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Catalog Table -->
+    <div class="main-card">
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Book Details</th>
+                        <th>Category</th>
+                        <th>ISBN</th>
+                        <th>Stock Status</th>
+                        <th>Publish Date</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var statusClass = item.AvailableCopies > 5 ? "in-stock" : (item.AvailableCopies > 0 ? "low-stock" : "out-of-stock");
+                        var statusText = item.AvailableCopies > 5 ? "In Stock" : (item.AvailableCopies > 0 ? "Low Stock" : "Out of Stock");
+
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="~/Files/Images/@item.ImageName" onerror="this.src='https://via.placeholder.com/150x200?text=No+Cover'" class="book-thumb me-3" alt="Cover" />
+                                    <div>
+                                        <div class="book-title">@item.Title</div>
+                                        <div class="text-muted small">By <span class="text-primary fw-medium">@(item.Author?.Name ?? "Unknown")</span></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border fw-normal px-2 py-1">
+                                    @(item.Category?.Name ?? "Uncategorized")
+                                </span>
+                            </td>
+                            <td><code class="text-muted small">@item.ISBN</code></td>
+                            <td>
+                                <span class="status-pill @statusClass">
+                                    @statusText (@item.AvailableCopies/@item.TotalCopies)
+                                </span>
+                            </td>
+                            <td class="text-muted small">@item.PublishDate.ToString("MMM yyyy")</td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-1">
+                                    @if (!string.IsNullOrEmpty(item.BookName))
+                                    {
+                                        <a href="~/Files/pdf/@item.BookName" 
+                                        class="btn-action" title="Download Digital Copy" target="_blank">
+                                            <i class="bi bi-download"></i>
+                                        </a>                   
+                                    }
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-action" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action" title="Edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action text-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (!Model.Any())
+        {
+            <div class="text-center py-5">
+                <i class="bi bi-journal-x display-1 text-light"></i>
+                <p class="text-muted mt-3">No books found in the catalog.</p>
+            </div>
+        }
+    </div>
+</div>

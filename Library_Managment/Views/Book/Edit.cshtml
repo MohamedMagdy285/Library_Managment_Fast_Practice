@@ -1,0 +1,222 @@
+﻿@model Library_Managment.PL.ViewModels.BookViewModel
+
+@{
+    ViewData["Title"] = "Edit Book - " + Model.Title;
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        padding: 3rem;
+    }
+
+    .section-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--primary);
+        letter-spacing: 0.05em;
+        margin-bottom: 1.5rem;
+        display: block;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+
+    /* Current Asset Previews */
+    .current-asset {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+
+    .current-thumb {
+        width: 40px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .btn-save {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem 2.5rem;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+        .btn-save:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="container py-5">
+    <!-- Header -->
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <a asp-action="Index" class="text-decoration-none text-muted small fw-bold">
+                        <i class="bi bi-chevron-left"></i> Back to Catalog
+                    </a>
+                    <h2 class="fw-bold m-0 mt-2">Edit Book Record</h2>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                    @* Hidden fields to track ID and existing file names *@
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="ImageName" />
+                    <input type="hidden" asp-for="BookName" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-4"></div>
+
+                    <div class="row g-5">
+                        <!-- Left Side: Content Meta -->
+                        <div class="col-lg-7 border-end">
+                            <span class="section-label">General Information</span>
+
+                            <div class="mb-4">
+                                <label asp-for="Title" class="form-label fw-bold small">Book Title</label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger small"></span>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label asp-for="ISBN" class="form-label fw-bold small">ISBN</label>
+                                    <input asp-for="ISBN" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="PublishDate" class="form-label fw-bold small">Publish Date</label>
+                                    <input asp-for="PublishDate" type="date" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label asp-for="AuthorId" class="form-label fw-bold small">Author</label>
+                                    <select asp-for="AuthorId" class="form-select" asp-items="Model.Authors"></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="CategoryId" class="form-label fw-bold small">Category</label>
+                                    <select asp-for="CategoryId" class="form-select" asp-items="Model.Categories"></select>
+                                </div>
+                            </div>
+
+                            <div class="mb-0">
+                                <label asp-for="Description" class="form-label fw-bold small">Synopsis</label>
+                                <textarea asp-for="Description" class="form-control" rows="6"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Right Side: Stock & Files -->
+                        <div class="col-lg-5">
+                            <span class="section-label">Inventory & Assets</span>
+
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <label asp-for="TotalCopies" class="form-label fw-bold small">Total Stock</label>
+                                    <input asp-for="TotalCopies" type="number" class="form-control" />
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="AvailableCopies" class="form-label fw-bold small">Available</label>
+                                    <input asp-for="AvailableCopies" type="number" class="form-control" />
+                                </div>
+                            </div>
+
+                            <!-- Image Update -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small">Cover Image</label>
+                                @if (!string.IsNullOrEmpty(Model.ImageName))
+                                {
+                                    <div class="current-asset">
+                                        <img src="~/Files/Images/@Model.ImageName" class="current-thumb" />
+                                        <span class="text-muted small">Current: @Model.ImageName</span>
+                                    </div>
+                                }
+                                <input asp-for="Image" type="file" class="form-control form-control-sm" accept="image/*" />
+                                <div class="text-muted" style="font-size: 0.7rem;">Leave blank to keep current cover.</div>
+                            </div>
+
+                            <!-- File Update -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small">Digital File (PDF/EPUB)</label>
+                                @if (!string.IsNullOrEmpty(Model.BookName))
+                                {
+                                    <div class="current-asset">
+                                        <i class="bi bi-file-earmark-check text-success fs-5"></i>
+                                        <span class="text-muted small">Current: @Model.BookName</span>
+                                    </div>
+                                }
+                                <input asp-for="Book" type="file" class="form-control form-control-sm" />
+                                <div class="text-muted" style="font-size: 0.7rem;">Upload a new file to replace the existing one.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
+                        <button type="button" class="btn text-danger fw-bold border-0" onclick="location.href='@Url.Action("Delete", new { id = Model.Id })'">
+                            <i class="bi bi-trash3 me-2"></i>Remove Book
+                        </button>
+                        <div class="d-flex gap-3">
+                            <a asp-action="Index" class="btn btn-light border rounded-pill px-4 fw-bold">Discard</a>
+                            <button type="submit" class="btn btn-save rounded-pill">
+                                <i class="bi bi-check-circle me-2"></i>Update Book
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

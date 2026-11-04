@@ -1,0 +1,227 @@
+﻿@model Author
+
+@{
+    ViewData["Title"] = "Author Profile - " + Model.Name;
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+    }
+
+    /* Page Header */
+    .back-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+    /* Cards */
+    .profile-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        padding: 2.5rem;
+    }
+
+    /* Large Avatar */
+    .avatar-xl {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.2);
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Bio Section */
+    .bio-container {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 2rem;
+        height: 100%;
+    }
+
+    .bio-content {
+        line-height: 1.8;
+        color: #475569;
+        font-size: 1.05rem;
+    }
+
+    .section-title {
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Action Buttons */
+    .btn-edit {
+        background: var(--primary);
+        color: white;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        border: none;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-edit:hover {
+            background: var(--primary-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+    .btn-outline {
+        border: 1px solid var(--border-color);
+        background: white;
+        color: var(--text-dark);
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            color: var(--primary);
+        }
+</style>
+
+<div class="container py-5">
+    <!-- Top Navigation -->
+    <div class="mb-4">
+        <a asp-action="Index" class="back-link">
+            <i class="bi bi-arrow-left me-2"></i>Back to Authors Directory
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Summary Card -->
+        <div class="col-lg-4">
+            <div class="profile-card text-center">
+                <div class="avatar-xl">
+                    @Model.Name.Substring(0, 1).ToUpper()
+                </div>
+                <h3 class="fw-bold mb-1">@Model.Name</h3>
+                <p class="text-muted mb-4 small">Registered Author #@Model.Id</p>
+
+                <hr class="my-4" style="opacity: 0.1;">
+
+                <div class="text-start ps-3">
+                    <div class="info-label">Birth Date</div>
+                    <div class="info-value">
+                        <i class="bi bi-calendar3 me-2 text-primary"></i>
+                        @Model.BirthDate.ToString("MMMM dd, yyyy")
+                    </div>
+
+                    <div class="info-label">Account Status</div>
+                    <div class="info-value">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                            Active Profile
+                        </span>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit">
+                        <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                    </a>
+                    <a asp-action="Index" class="btn-outline">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Biography Details -->
+        <div class="col-lg-8">
+            <div class="bio-container shadow-sm">
+                <h4 class="section-title">
+                    <i class="bi bi-person-lines-fill text-primary"></i>
+                    Author Biography
+                </h4>
+
+                <div class="bio-content">
+                    @if (!string.IsNullOrEmpty(Model.Biography))
+                    {
+                        @* Using a more stylized paragraph for the bio *@
+                        <p style="white-space: pre-line;">@Model.Biography</p>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-card-text display-1 text-light"></i>
+                            <p class="text-muted mt-3 italic">No biography has been recorded for this author yet.</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Footer info -->
+                <div class="mt-5 pt-4 border-top">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="info-label">Last Modified</div>
+                            <div class="small text-muted">July 24, 2024 (System Default)</div>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <div class="info-label">Author ID</div>
+                            <div class="small fw-bold">@Model.Id</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

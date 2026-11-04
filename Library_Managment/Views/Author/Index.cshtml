@@ -1,0 +1,328 @@
+﻿@model IEnumerable<Author>
+
+@{
+    ViewData["Title"] = "Author Management";
+}
+
+<!-- Google Fonts: Plus Jakarta Sans for a modern tech feel -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+    }
+
+    /* Page Heading Area */
+    .page-title {
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-dark);
+    }
+
+    /* Modern Card Layout */
+    .main-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .table-toolbar {
+        padding: 1.5rem;
+        background: #fff;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .search-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 400px;
+    }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+    .search-input {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.5rem;
+        background: #f1f5f9;
+        border: 1px solid transparent;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+        .search-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+            outline: none;
+        }
+    /* New Button Styles */
+    .btn-search {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+        .btn-search:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+        }
+
+    .btn-clear {
+        background: #f1f5f9;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+        .btn-clear:hover {
+            background: #e2e8f0;
+            color: #ef4444;
+        }
+
+    /* Ensure the wrapper doesn't have a fixed max-width here so the button fits nicely */
+    .search-wrapper {
+        position: relative;
+        max-width: none;
+    }
+    /* Refined Table Design */
+    .table thead th {
+        background: #f8fafc;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        padding: 1rem 1.5rem;
+        border-top: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table tbody tr {
+        transition: background 0.2s;
+    }
+
+        .table tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+    .table td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Author Avatar Initials */
+    .author-avatar {
+        width: 42px;
+        height: 42px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    /* Buttons & Actions */
+    .btn-add {
+        background: var(--primary);
+        color: white;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        border-radius: 10px;
+        border: none;
+        transition: all 0.2s;
+    }
+
+        .btn-add:hover {
+            background: var(--primary-hover);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+    .action-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: var(--text-muted);
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+        .action-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .action-btn.delete:hover {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+    .bio-text {
+        max-width: 350px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+</style>
+
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="page-title mb-1">Authors Directory</h2>
+            <p class="text-muted mb-0">View and manage all registered authors in the system.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-add">
+            <i class="bi bi-plus-lg me-2"></i>New Author
+        </a>
+    </div>
+
+    <!-- Stats Summary (Quick View) -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="main-card p-3 d-flex align-items-center">
+                <div class="rounded-circle bg-light p-3 me-3">
+                    <i class="bi bi-person-check text-primary fs-4"></i>
+                </div>
+                <div>
+                    <div class="small text-muted">Total Authors</div>
+                    <div class="fw-bold fs-5">@Model.Count()</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Container -->
+    <div class="main-card">
+        <!-- Search and Filter Toolbar -->
+        <div class="table-toolbar">
+            @* <div class="search-wrapper">
+                <i class="bi bi-search"></i>
+                <input type="text" class="search-input" placeholder="Search by name...">
+            </div> *@
+            <form asp-action="Index" method="get">
+                <div class="search-wrapper">
+                    <i class="bi bi-search"></i>
+
+                    <input type="text"
+                           name="search"
+                           class="search-input"
+                           placeholder="Search by name..." >
+                </div>
+                     
+                <button type="submit" class="btn-search">
+            </form>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light border rounded-3 btn-sm px-3">
+                    <i class="bi bi-filter me-2"></i>Filter
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Author Profile</th>
+                        <th>Birth Date</th>
+                        <th>Biography Snippet</th>
+                        <th class="text-end">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="author-avatar me-3">
+                                        @item.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Name</div>
+                                        @* <div class="text-muted" style="font-size: 0.75rem;">ID: #@item.Id</div> *@
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-dark small fw-medium">
+                                    <i class="bi bi-calendar3 me-2 text-muted"></i>@item.BirthDate.ToString("MMM dd, yyyy")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="bio-text">
+                                    @(string.IsNullOrEmpty(item.Biography) ? "No biography recorded." : item.Biography)
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="action-btn" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn" title="Edit Profile">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn delete" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer / Pagination Placeholder -->
+        <div class="p-3 bg-light border-top text-center">
+            <span class="text-muted small">Showing @Model.Count() authors</span>
+        </div>
+    </div>
+</div>

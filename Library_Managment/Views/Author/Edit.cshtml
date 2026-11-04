@@ -1,0 +1,213 @@
+﻿@model Author
+
+@{
+    ViewData["Title"] = "Edit Author - " + Model.Name;
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --danger: #ef4444;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-dark);
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        padding: 3rem;
+    }
+
+    .page-header {
+        margin-bottom: 2.5rem;
+    }
+
+    /* Input Styling */
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        margin-bottom: 0.6rem;
+    }
+
+    .input-group-text {
+        background-color: #f8fafc;
+        border-right: none;
+        color: var(--text-muted);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+    .has-icon .form-control {
+        border-left: none;
+        border-radius: 0 12px 12px 0;
+    }
+
+    /* Avatar Preview */
+    .edit-avatar-preview {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn-save {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+        .btn-save:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+    .btn-cancel {
+        background: white;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+        .btn-cancel:hover {
+            background: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+    .validation-summary {
+        border-radius: 12px;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Breadcrumb / Back -->
+            <div class="mb-4">
+                <a asp-action="Index" class="text-decoration-none text-muted small fw-medium">
+                    <i class="bi bi-chevron-left me-1"></i> Back to Authors
+                </a>
+            </div>
+
+            <div class="form-card">
+                <div class="page-header d-flex align-items-center gap-4">
+                    <div class="edit-avatar-preview">
+                        @Model.Name.Substring(0, 1).ToUpper()
+                    </div>
+                    <div>
+                        <h2 class="fw-bold m-0">Edit Profile</h2>
+                        <p class="text-muted m-0">Update the information for <strong>@Model.Name</strong></p>
+                    </div>
+                </div>
+
+                <form asp-action="Edit" method="post">
+                    <!-- Hidden ID Field -->
+                    <input type="hidden" asp-for="Id" />
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger validation-summary mb-4"></div>
+
+                    <div class="row">
+                        <!-- Full Name -->
+                        <div class="col-12 mb-4">
+                            <label asp-for="Name" class="form-label">Full Name</label>
+                            <div class="input-group has-icon">
+                                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                <input asp-for="Name" class="form-control" placeholder="e.g. J.K. Rowling" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Birth Date -->
+                        <div class="col-md-6 mb-4">
+                            <label asp-for="BirthDate" class="form-label">Date of Birth</label>
+                            <div class="input-group has-icon">
+                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                <input asp-for="BirthDate" type="date" class="form-control" />
+                            </div>
+                            <span asp-validation-for="BirthDate" class="text-danger small mt-1 d-block"></span>
+                        </div>
+
+                        <!-- Short Status Hint (UX) -->
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">Record Status</label>
+                            <div class="form-control bg-light text-muted border-dashed" style="border-style: dashed;">
+                                <i class="bi bi-shield-check me-2 text-success"></i>Verified Author
+                            </div>
+                        </div>
+
+                        <!-- Biography -->
+                        <div class="col-12 mb-5">
+                            <label asp-for="Biography" class="form-label">Biography</label>
+                            <textarea asp-for="Biography" class="form-control" rows="6" placeholder="Write a professional summary..."></textarea>
+                            <span asp-validation-for="Biography" class="text-danger small mt-1 d-block"></span>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                        <button type="button" class="btn text-danger fw-600 p-0" onclick="location.href='@Url.Action("Delete", new { id = Model.Id })'">
+                            <i class="bi bi-trash3 me-2"></i>Remove Profile
+                        </button>
+
+                        <div class="d-flex gap-3">
+                            <a asp-action="Index" class="btn btn-cancel">Cancel</a>
+                            <button type="submit" class="btn btn-save">
+                                <i class="bi bi-check2-circle me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,185 @@
+﻿@model Library_Managment.PL.ViewModels.BorrowViewModel
+
+@{
+    ViewData["Title"] = "Process Book Return";
+}
+
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+        --text-dark: #0f172a;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+        --success: #10b981;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--bg-main);
+    }
+
+    .return-card {
+        background: white;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        max-width: 700px;
+        margin: 2rem auto;
+    }
+
+    .return-header {
+        background: #f0fdf4; /* Light success green */
+        padding: 2rem;
+        text-align: center;
+        border-bottom: 1px solid #dcfce7;
+    }
+
+    .return-icon-circle {
+        width: 70px;
+        height: 70px;
+        background: white;
+        color: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1rem;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+    }
+
+    .transaction-summary {
+        background: #f8fafc;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px dashed #e2e8f0;
+    }
+
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+    .label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+    }
+
+    .value {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+
+    .btn-finalize {
+        background: var(--success);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 2rem;
+        font-weight: 700;
+        width: 100%;
+        transition: all 0.3s;
+    }
+
+        .btn-finalize:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+        }
+
+    .btn-cancel {
+        background: white;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 0.8rem;
+        width: 100%;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="return-card">
+        <!-- Header -->
+        <div class="return-header">
+            <div class="return-icon-circle">
+                <i class="bi bi-arrow-return-left"></i>
+            </div>
+            <h3 class="fw-bold text-dark m-0">Process Book Return</h3>
+            <p class="text-success small fw-bold mt-1">Finalizing Transaction #TRX-@Model.Id.ToString("D4")</p>
+        </div>
+
+        <div class="p-4 p-md-5">
+            <p class="text-center text-muted mb-4">
+                Confirm the return of the book to update the library inventory and close the member's borrowing record.
+            </p>
+
+            <!-- Summary Table -->
+            <div class="transaction-summary">
+                <div class="detail-item">
+                    <span class="label">Member</span>
+                    <span class="value">@Model.Member?.FullName</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Book Title</span>
+                    <span class="value">@Model.Book?.Title</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Date Borrowed</span>
+                    <span class="value">@Model.BorrowDate.ToString("MMMM dd, yyyy")</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Current Status</span>
+                    <span class="value text-warning">On Loan</span>
+                </div>
+            </div>
+
+            <!-- Return Logic Explanation -->
+            <div class="alert bg-light border-0 d-flex align-items-start mb-5" style="border-radius: 12px;">
+                <i class="bi bi-info-circle-fill text-primary me-3 mt-1"></i>
+                <div class="small text-muted">
+                    Clicking the button below will set the <strong>Return Date</strong> to today (@DateTime.Now.ToString("MMM dd")), mark the status as <strong>Returned</strong>, and increment the <strong>Available Copies</strong> for this book.
+                </div>
+            </div>
+
+            <form asp-action="Edit" method="post">
+                <!-- Keep necessary hidden fields for POST model binding -->
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="BookId" />
+                <input type="hidden" asp-for="MemberId" />
+                <input type="hidden" asp-for="BorrowDate" />
+
+                <button type="submit" class="btn btn-finalize">
+                    <i class="bi bi-check2-all me-2"></i> Confirm & Finalize Return
+                </button>
+
+                <a asp-action="Index" class="btn btn-cancel">
+                    Cancel Action
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
